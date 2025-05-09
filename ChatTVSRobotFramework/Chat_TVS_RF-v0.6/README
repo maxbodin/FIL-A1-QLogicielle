@@ -1,0 +1,60 @@
+Programme à usage pédagogique.
+
+Copyright (c)(2024) Matthias BRUN (matthias.brun@eseo.fr)
+
+
+-----------
+Description
+-----------
+
+Tests de validation système (TVS) du Chat (Felix/Camix), implémentés en RobotFramework.
+Programme non utilisable en production, réservé à un usage pédagogique (!)
+
+Le système sous test est mis à disposition dans le répertoire SUT/
+
+Encodage : UTF-8
+
+
+------------
+Pré-requis :
+------------
+
+- python 3.x (>= 3.9)
+
+- PyCharm : https://www.jetbrains.com/fr-fr/pycharm/
+    > Télécharger > PyCharm Community Edition)
+    + Installer plugin Hyper RobotFramework Support
+
+- RemoteSwing Library : https://github.com/robotframework/remoteswinglibrary/releases/
+    > Télécharger remoteswinglibrary-2.3.3.jar
+    > Télécharger RemoteSwingLibrary-2.3.3.html
+      (+ cf. https://robotframework.org/SwingLibrary/SwingLibrary.html)
+
+
+------------------------
+Construction / Exécution
+------------------------
+
+PyCharm :
+
+    # open the project
+    # Configure a Python interpreter...
+        > Add Interpreter > Add local interpreter...
+            > Virtualenv Environment >  Environment: [x] New
+
+    # Python Packages
+        > robotframework > Install package
+
+    # Edit configuration
+        > Edit configuration template > Robot > Environment variables:
+            + ROBOT_OPTIONS=--outputdir report --RemoveKeywords "WUKS" --pythonpath "/path/to/remoteswinglibrary-2.3.3.jar"
+
+
+----------
+Dépendance
+----------
+
+Les tests s'appuient sur les noms des widgets du client Felix (Java) pour y accéder.
+Ceci nécessite que des noms soient associés aux widgets pour les identifier.
+Une bonne pratique veut que ces noms soient issus des spécifications (ou maquettages) de l'IHM.
+
