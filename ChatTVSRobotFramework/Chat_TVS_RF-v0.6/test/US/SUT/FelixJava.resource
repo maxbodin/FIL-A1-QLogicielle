@@ -25,8 +25,8 @@ Library    String
 
 *** Variables ***
 
-${IP_DEFAUT}            127.0.0.1
-${PORT_DEFAUT}          12345
+${IP_DEFAULT}            127.0.0.1
+${PORT_DEFAULT}          12345
 ${DELAI_CONNEXION}      3s
 
 ${MESSAGE_INFORMATION_CONNEXION}               Saisir l'adresse et le port du serveur chat.
@@ -61,6 +61,7 @@ l'${utilisateur} lance le client chat
     ...                  stdout=/dev/null    stderr=/dev/null
     Set Jemmy Timeouts    2
     Switch To Application    ${utilisateur}
+    la vue connexion est affichée
 
 
 l'${utilisateur} ferme le client chat
@@ -74,9 +75,40 @@ plusieurs ${utilisateurs} ferment leur client chat
     END
 
 #
-# TODO keywords pour modifier l'ip et le port, et demander à se connecter.
-# TIPS : Utilisation de RemoteSwingLibrary
+# Keywords pour modifier l'ip et le port, et demander à se connecter.
 #
+
+l'${utilisateur} modifie l'adresse ${ip}
+    Switch To Application    ${utilisateur}
+    Select Window    Connexion
+    Focus To Component    ip
+    Clear Text Field    ip
+    Type Into Text Field    ip    ${ip}
+
+l'${utilisateur} modifie le numéro du port ${port}
+    Switch To Application    ${utilisateur}
+    Select Window    Connexion
+    Focus To Component    port
+    Clear Text Field    port
+    Type Into Text Field    port    ${port}
+
+l'${utilisateur} demande à se connecter
+    Switch To Application    ${utilisateur}
+    Select Window    Connexion
+    Click On Component    connecter
+    ${ip_value} =    Get Text Field Value    ip
+    ${port_value} =    Get Text Field Value    port
+    ${message_connexion} =    Format String    ${MESSAGE_INFORMATION_CONNEXION_IP_PORT}    ip=${ip_value}    port=${port_value}
+    l'${utilisateur} est informé ${message_connexion}
+    Sleep    ${DELAI_CONNEXION}
+
+
+plusieurs ${utilisateurs} sont connectés au chat (canal par défaut)
+    FOR    ${utilisateur}    IN    @{utilisateurs}
+        l'${utilisateur} lance le client chat
+        l'${utilisateur} demande à se connecter
+    END
+
 
 l'${utilisateur} saisit la commande d'aide
     l'${utilisateur} envoie ${COMMANDE_AIDE}
@@ -90,6 +122,16 @@ chaque ${utilisateur} envoie un ${message}
 # Asserts - Résultats observables (points des critères d'acceptation des US)
 #
 
+la vue connexion est affichée
+    Window Should Be Open    Connexion
+    Select Window    Connexion
+    Component Should Be Visible    ip
+    Component Should Be Visible    port
+    Component Should Be Visible    connecter
+    Component Should Be Visible    information
+    ${info_message} =    Get Text Field Value    information
+    Should Be Equal    ${info_message}    ${MESSAGE_INFORMATION_CONNEXION}
+
 la vue chat de l'${utilisateur} est affichée
     [Teardown]    Run Keyword If    '${KEYWORD STATUS}' == 'FAIL'    list windows
     Switch To Application    ${utilisateur}
@@ -100,19 +142,19 @@ la vue chat de l'${utilisateur} est affichée
     # implicite
     le champ saisie est vide
 
+la vue chat est affichée
+    Window Should Be Open    Chat
+    Select Window    Chat
+    Component Should Be Visible    saisie
+    Component Should Be Visible    messages
+    # implicite
+    le champ saisie est vide
 
-#
-# TODO keywords pour valider les affichages de vues et de messages.
-# TIPS : Utilisation de RemoteSwingLibrary
-#        Utilisation de BuiltIn (https://robotframework.org/robotframework/latest/libraries/BuiltIn.html)
-#          -> Should be equal as strings, Should be equal as numbers, Should be equal, Sleep
-#        Utilisation de String (https://robotframework.org/robotframework/latest/libraries/String.html)
-#          -> Format String (avec MESSAGE_INFORMATION_CONNEXION_IP_PORT et MESSAGE_INFORMATION_CONNEXION_IMPOSSIBLE, cf. Variables)
-#
-#        + cf. variable DELAI_CONNEXION
-#        + cf. keyword "l'${utilisateur} est informé ${message_attendu}" (Asserts utiles)
-#
-
+la connexion est impossible @${ip}:${port}
+    ${message_connexion_impossible} =    Format String    ${MESSAGE_INFORMATION_CONNEXION_IMPOSSIBLE}    ip=${ip}    port=${port}
+    Wait Until Keyword Succeeds    ${DELAI_CONNEXION}    0.5s    l'utilisateur est informé ${message_connexion_impossible}
+    Window Should Be Open    Connexion
+    Window Should Not Be Open    Chat
 
 l'${utilisateur} reçoit un message d'accueil
     l'${utilisateur} reçoit ${MESSAGE_ACCUEIL}
@@ -177,4 +219,3 @@ l'${utilisateur} est informé ${message_attendu}
     Select Window    Connexion
     ${message} =    Get Text Field Value    information
     Should Be Equal    ${message}    ${message_attendu}
-

@@ -34,3 +34,32 @@ AC - Afficher vue chat
     When l'utilisateur lance le client chat
     Then la vue chat est affichée
     [Teardown]    Run Keywords    l'utilisateur ferme le client chat
+
+AC - Connexion au chat
+    Given le serveur chat est accessible @${IP_DEFAULT}:${PORT_DEFAULT}
+    And plusieurs ${2 autres utilisateurs} sont connectés au chat (canal par défaut)
+    When l'utilisateur lance le client chat
+    And l'utilisateur demande à se connecter
+    Then l'utilisateur reçoit un message d'accueil
+    And tous les ${2 autres utilisateurs} reçoivent un message d'arrivée du nouvel utilisateur
+    [Teardown]    Run Keywords    l'utilisateur ferme le client chat
+    ...                      AND    plusieurs ${2 autres utilisateurs} ferment leur client chat
+
+AC - Connexion au chat avec modification IP/port
+    Given le serveur chat est accessible @${IP_DEFAULT}:${PORT_DEFAULT}
+    And plusieurs ${2 autres utilisateurs} sont connectés au chat (canal par défaut)
+    When l'utilisateur lance le client chat
+    And l'utilisateur modifie l'adresse ${IP_DEFAULT}
+    And l'utilisateur modifie le numéro du port ${PORT_DEFAULT}
+    And l'utilisateur demande à se connecter
+    Then l'utilisateur reçoit un message d'accueil
+    And tous les ${2 autres utilisateurs} reçoivent un message d'arrivée du nouvel utilisateur
+    [Teardown]    Run Keywords    l'utilisateur ferme le client chat
+    ...                      AND    plusieurs ${2 autres utilisateurs} ferment leur client chat
+
+AC - Connexion impossible
+    Given le serveur chat n'est pas accessible @${IP_DEFAULT}:${PORT_DEFAULT}
+    When l'utilisateur lance le client chat
+    And l'utilisateur demande à se connecter
+    Then la connexion est impossible @${IP_DEFAULT}:${PORT_DEFAULT}
+    [Teardown]    Run Keywords    l'utilisateur ferme le client chat
