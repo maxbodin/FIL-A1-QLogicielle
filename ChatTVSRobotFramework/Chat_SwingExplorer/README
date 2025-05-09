@@ -1,0 +1,16 @@
+
+[Terminal 1]
+java -jar Camix_Java-0.5.jar
+
+[Terminal 2 (sous Linux)]
+java -cp swingexplorer/swag.jar:swingexplorer/swexpl.jar:Felix_Java-0.5.jar org.swingexplorer.Launcher felix.Felix
+
+[Terminal 2 (sous Windows)]
+java -cp swingexplorer/swag.jar;swingexplorer/swexpl.jar;Felix_Java-0.5.jar org.swingexplorer.Launcher felix.Felix
+
+
+[Sources]
+https://github.com/robotframework/SwingLibrary/wiki/Getting-Started#tools-to-help-component-discovery
+
+https://github.com/robotframework/swingexplorer/releases/tag/1.6.0
+
